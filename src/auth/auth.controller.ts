@@ -1,4 +1,13 @@
-import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Post,
+  Put,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { AuthService } from 'auth/auth.service';
@@ -22,6 +31,27 @@ export class AuthController {
     return res.status(HttpStatus.OK).json({
       email,
       password,
+    });
+  }
+
+  @Get('/current-user')
+  currentUser(@Res() res: Response) {
+    return res.status(HttpStatus.OK).json({
+      msg: 'Get Current User',
+    });
+  }
+
+  @Put('/update-password')
+  updatePassword(@Res() res: Response) {
+    return res.status(HttpStatus.OK).json({
+      msg: 'Update Password',
+    });
+  }
+
+  @Delete('/delete-account')
+  deleteAccount(@Res() res: Response) {
+    return res.status(HttpStatus.OK).json({
+      msg: 'Delete Account',
     });
   }
 }
