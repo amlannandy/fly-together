@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { HydratedDocument } from 'mongoose';
 
 @Schema({})
 class User {
@@ -9,7 +10,7 @@ class User {
 
   @Prop({
     type: String,
-    unique: true,
+    unique: [true, 'Account with this email already exists'],
     required: [true, 'Please provide an email'],
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -52,13 +53,14 @@ class User {
 
 const UserSchema = SchemaFactory.createForClass(User);
 
+type UserDocument = HydratedDocument<User>;
+
 // Encrypt password before saving
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
@@ -74,4 +76,4 @@ UserSchema.methods.matchPassword = async function (enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-export { User, UserSchema };
+export { User, UserSchema, UserDocument };
