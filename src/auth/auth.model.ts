@@ -1,6 +1,6 @@
+import { JwtService } from '@nestjs/jwt';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { HydratedDocument } from 'mongoose';
 
 @Schema()
@@ -51,6 +51,8 @@ class User {
   createdAt: Date;
 
   matchPassword: (password: string) => Promise<boolean>;
+
+  getJwtToken: (jwtService: JwtService) => string;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
@@ -67,10 +69,14 @@ UserSchema.pre('save', async function (next) {
 });
 
 // Sign JWT and return
-UserSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+UserSchema.methods.getJwtToken = function (jwtService: JwtService) {
+  return jwtService.sign(
+    { id: this._id },
+    {
+      expiresIn: process.env.JWT_EXPIRE,
+      secret: process.env.JWT_SECRET,
+    },
+  );
 };
 
 // Match user entered password with hashed password in db

@@ -4,17 +4,23 @@ import { Model } from 'mongoose';
 
 import { User, UserDocument } from 'auth/auth.model';
 import { LoginBody, RegisterBody } from 'auth/auth.types';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  create(body: RegisterBody): Promise<User> {
+  async create(body: RegisterBody): Promise<string> {
     const user = new this.userModel(body);
-    return user.save();
+    await user.save();
+    const token = user.getJwtToken(this.jwtService);
+    return token;
   }
 
-  async authenticate(body: LoginBody): Promise<User> {
+  async authenticate(body: LoginBody): Promise<string> {
     const { email, password } = body;
     const user = await this.userModel.findOne({ email }).select('+password');
     // User with that email does not exist
@@ -28,6 +34,7 @@ export class AuthService {
     if (!authResult) {
       throw new HttpException('Password is incorrect', HttpStatus.UNAUTHORIZED);
     }
-    return user;
+    const token = user.getJwtToken(this.jwtService);
+    return token;
   }
 }

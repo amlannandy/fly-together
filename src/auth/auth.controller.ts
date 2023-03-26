@@ -19,21 +19,21 @@ export class AuthController {
 
   @Post('/register')
   register(@Body() body: RegisterBody, @Res() res: Response) {
-    const user = this.authService.create(body);
+    const token = this.authService.create(body);
 
     return res.status(HttpStatus.CREATED).json({
       statusCode: HttpStatus.CREATED,
       message: 'User successfully registered!',
-      data: user,
+      data: token,
     });
   }
 
   @Post('/login')
   async login(@Body() body: LoginBody, @Res() res: Response) {
-    const user = await this.authService.authenticate(body);
+    const token = await this.authService.authenticate(body);
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
-      data: user,
+      data: token,
     });
   }
 

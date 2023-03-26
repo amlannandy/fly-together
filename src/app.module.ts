@@ -12,5 +12,3 @@ import { AuthModule } from 'auth/auth.module';
   ],
 })
 export class AppModule {}
-
-console.log(process.env.MONGODB_URL);
