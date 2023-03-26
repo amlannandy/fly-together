@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { User, UserDocument } from 'auth/auth.model';
 import { LoginBody, RegisterBody } from 'auth/auth.types';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,25 @@ export class AuthService {
   ) {}
 
   async create(body: RegisterBody): Promise<string> {
-    const user = new this.userModel(body);
+    // User with that email already exists
+    let user = await this.userModel.findOne({ email: body.email });
+    if (user) {
+      throw new HttpException(
+        'User with this email already exists',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    // Phone number is already associated with another account
+    user = await this.userModel.findOne({ phone: body.phone });
+    if (user) {
+      throw new HttpException(
+        'Phone number is already associated with another account',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    user = new this.userModel(body);
     await user.save();
     const token = user.getJwtToken(this.jwtService);
     return token;

@@ -18,8 +18,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
-  register(@Body() body: RegisterBody, @Res() res: Response) {
-    const token = this.authService.create(body);
+  async register(@Body() body: RegisterBody, @Res() res: Response) {
+    const token = await this.authService.create(body);
 
     return res.status(HttpStatus.CREATED).json({
       statusCode: HttpStatus.CREATED,

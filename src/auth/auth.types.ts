@@ -13,7 +13,7 @@ export class RegisterBody {
 
   @IsNotEmpty()
   @IsNumberString()
-  @Length(10)
+  @Length(10, 10)
   phone: string;
 }
 
