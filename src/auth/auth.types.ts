@@ -16,3 +16,12 @@ export class RegisterBody {
   @Length(10)
   phone: string;
 }
+
+export class LoginBody {
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @Length(8)
+  password: string;
+}

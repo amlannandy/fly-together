@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { HydratedDocument } from 'mongoose';
 
-@Schema({})
+@Schema()
 class User {
   @Prop({ type: String, required: true })
   name: string;
@@ -49,6 +49,8 @@ class User {
     default: Date.now,
   })
   createdAt: Date;
+
+  matchPassword: (password: string) => Promise<boolean>;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

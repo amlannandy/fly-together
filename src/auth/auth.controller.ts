@@ -6,13 +6,12 @@ import {
   HttpStatus,
   Post,
   Put,
-  Req,
   Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import { AuthService } from 'auth/auth.service';
-import { RegisterBody } from 'auth/auth.types';
+import { LoginBody, RegisterBody } from 'auth/auth.types';
 
 @Controller('/auth')
 export class AuthController {
@@ -30,11 +29,11 @@ export class AuthController {
   }
 
   @Post('/login')
-  login(@Req() req: Request, @Res() res: Response) {
-    const { email, password } = req.body;
+  async login(@Body() body: LoginBody, @Res() res: Response) {
+    const user = await this.authService.authenticate(body);
     return res.status(HttpStatus.OK).json({
-      email,
-      password,
+      statusCode: HttpStatus.OK,
+      data: user,
     });
   }
 
