@@ -1,5 +1,14 @@
 import { IsEmail, IsNotEmpty, IsNumberString, Length } from 'class-validator';
 
+import { User } from 'auth/auth.model';
+
+export class ApiRequest {
+  user: User;
+  headers: Headers & {
+    authorization: string;
+  };
+}
+
 export class RegisterBody {
   @IsNotEmpty()
   name: string;
