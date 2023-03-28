@@ -4,7 +4,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { User, UserDocument } from 'auth/auth.model';
-import { LoginBody, RegisterBody } from 'auth/auth.types';
+import {
+  ApiRequest,
+  LoginBody,
+  RegisterBody,
+  UpdatePasswordBody,
+} from 'auth/auth.types';
 
 @Injectable()
 export class AuthService {
@@ -54,5 +59,18 @@ export class AuthService {
     }
     const token = user.getJwtToken(this.jwtService);
     return token;
+  }
+
+  async updatePassword(req: ApiRequest, body: UpdatePasswordBody) {
+    const { currentPassword, newPassword } = body;
+    const user = await this.userModel.findById(req.user.id).select('+password');
+    const authResult = await user.matchPassword(currentPassword);
+
+    if (!authResult) {
+      throw new HttpException('Incorrect Password', HttpStatus.UNAUTHORIZED);
+    }
+
+    user.password = newPassword;
+    await user.save();
   }
 }

@@ -12,7 +12,12 @@ import {
 import { Response } from 'express';
 
 import { AuthService } from 'auth/auth.service';
-import { ApiRequest, LoginBody, RegisterBody } from 'auth/auth.types';
+import {
+  ApiRequest,
+  LoginBody,
+  RegisterBody,
+  UpdatePasswordBody,
+} from 'auth/auth.types';
 
 @Controller('/auth')
 export class AuthController {
@@ -47,9 +52,15 @@ export class AuthController {
   }
 
   @Put('/update-password')
-  updatePassword(@Res() res: Response) {
+  async updatePassword(
+    @Req() req: ApiRequest,
+    @Body() body: UpdatePasswordBody,
+    @Res() res: Response,
+  ) {
+    await this.authService.updatePassword(req, body);
     return res.status(HttpStatus.OK).json({
-      msg: 'Update Password',
+      statusCode: HttpStatus.OK,
+      message: 'Password updated successfully!',
     });
   }
 

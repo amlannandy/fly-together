@@ -1,9 +1,9 @@
 import { IsEmail, IsNotEmpty, IsNumberString, Length } from 'class-validator';
 
-import { User } from 'auth/auth.model';
+import { UserDocument } from 'auth/auth.model';
 
 export class ApiRequest {
-  user: User;
+  user: UserDocument;
   headers: Headers & {
     authorization: string;
   };
@@ -33,4 +33,14 @@ export class LoginBody {
   @IsNotEmpty()
   @Length(8)
   password: string;
+}
+
+export class UpdatePasswordBody {
+  @IsNotEmpty()
+  @Length(8)
+  currentPassword: string;
+
+  @IsNotEmpty()
+  @Length(8)
+  newPassword: string;
 }
