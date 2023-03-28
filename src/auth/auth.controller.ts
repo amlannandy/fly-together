@@ -14,6 +14,7 @@ import { Response } from 'express';
 import { AuthService } from 'auth/auth.service';
 import {
   ApiRequest,
+  DeleteAccountBody,
   LoginBody,
   RegisterBody,
   UpdatePasswordBody,
@@ -65,9 +66,15 @@ export class AuthController {
   }
 
   @Delete('/delete-account')
-  deleteAccount(@Res() res: Response) {
+  async deleteAccount(
+    @Req() req: ApiRequest,
+    @Body() body: DeleteAccountBody,
+    @Res() res: Response,
+  ) {
+    await this.authService.deleteAccount(req, body);
     return res.status(HttpStatus.OK).json({
-      msg: 'Delete Account',
+      statusCode: HttpStatus.OK,
+      message: 'Account deleted successfully!',
     });
   }
 }

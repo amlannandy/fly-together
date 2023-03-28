@@ -44,3 +44,9 @@ export class UpdatePasswordBody {
   @Length(8)
   newPassword: string;
 }
+
+export class DeleteAccountBody {
+  @IsNotEmpty()
+  @Length(8)
+  password: string;
+}

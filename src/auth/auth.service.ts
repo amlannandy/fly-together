@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from 'auth/auth.model';
 import {
   ApiRequest,
+  DeleteAccountBody,
   LoginBody,
   RegisterBody,
   UpdatePasswordBody,
@@ -72,5 +73,16 @@ export class AuthService {
 
     user.password = newPassword;
     await user.save();
+  }
+
+  async deleteAccount(req: ApiRequest, body: DeleteAccountBody) {
+    const user = await this.userModel.findById(req.user.id).select('+password');
+    const authResult = await user.matchPassword(body.password);
+
+    if (!authResult) {
+      throw new HttpException('Incorrect Password', HttpStatus.UNAUTHORIZED);
+    }
+
+    await this.userModel.findByIdAndDelete(req.user.id);
   }
 }
