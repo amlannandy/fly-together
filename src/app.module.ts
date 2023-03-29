@@ -5,12 +5,12 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { AuthModule } from 'auth/auth.module';
 import { User, UserSchema } from 'auth/auth.model';
+import { RidesModule } from 'rides/rides.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URL),
-    AuthModule,
     MongooseModule.forFeature([
       {
         name: User.name,
@@ -18,6 +18,8 @@ import { User, UserSchema } from 'auth/auth.model';
       },
     ]),
     JwtModule.register({ secret: process.env.JWT_SECRET }),
+    AuthModule,
+    RidesModule,
   ],
 })
 export class AppModule {}
